@@ -1,1 +1,5 @@
+# Databases
+/db/*.db
+
+# Files
 node_modules
