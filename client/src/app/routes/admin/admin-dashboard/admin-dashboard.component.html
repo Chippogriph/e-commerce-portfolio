@@ -1,0 +1,47 @@
+<div class="flex">
+  <div class="w-[300px] h-screen border-r-2">
+    <h2 class="p-4 text-2xl">Produkter</h2>
+  </div>
+  <div class="flex-grow p-5 bg-white">
+    <div class="flex justify-between mb-5">
+      <h2 class="text-3xl">Produkter</h2>
+
+      <a
+        routerLink="new"
+        class="bg-[#276B6C] hover:bg-[#73B8B7] px-5 py-2.5 no-underline rounded-md text-white font-bold"
+      >
+        Ny produkt
+      </a>
+    </div>
+    <table class="border w-full">
+      <colgroup>
+        <col class="border" />
+        <col class="border" />
+        <col class="border" />
+        <col class="border w-[75px]" />
+      </colgroup>
+      <thead class="border text-left bg-[#276B6C] text-white">
+        <tr>
+          <th class="pl-2 py-1">Namn</th>
+          <th class="pl-2 py-1">SKU</th>
+          <th class="pl-2 py-1">Pris</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="border">
+        <tr
+        *ngFor="let product of products">
+          <td class="pl-2 py-1">{{product.name}}</td>
+          <td class="pl-2 py-1">{{product.sku}}</td>
+          <td class="pl-2 py-1">{{product.price}}</td>
+          <td class="flex justify-evenly pt-2">
+            <i
+              (click)="removeProduct(product.id)"
+              class="fa-solid fa-trash-can text-[#276B6C] hover:text-[#73B8B7] hover:cursor-pointer"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
