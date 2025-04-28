@@ -1,1 +1,86 @@
-<p>new-product works!</p>
+<div class="flex">
+  <div class="w-[300px] h-screen border border-black-r-2">
+    <h2 class="p-4 text-2xl">Produkter</h2>
+  </div>
+  <div class="bg-white p-10 text-2xl w-1/2">
+    <form [formGroup]="formGroup" class="flex flex-col" (ngSubmit)="onSubmit()">
+      <label for="name" class="mb-1"> Namn </label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="Ange namn"
+        maxLength="{25}"
+        class="border border-black mb-8 rounded p-1 w-1/2"
+      />
+
+      <label for="description" class="mb-1"> Beskrivning </label>
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Ange beskrivning"
+        class="border border-black mb-8 rounded p-1 h-44"
+      ></textarea>
+
+      <label for="url" class="mb-1"> Bild </label>
+      <input
+        type="url"
+        id="url"
+        formControlName="url"
+        required
+        class="border border-black mb-8 rounded p-1"
+      />
+
+      <label for="brand" class="mb-1"> Märke </label>
+      <input
+        type="text"
+        id="brand"
+        formControlName="brand"
+        class="border border-black mb-8 rounded p-1"
+      />
+
+      <label for="sku" class="mb-1"> SKU </label>
+      <input
+        type="text"
+        id="sku"
+        formControlName="sku"
+        placeholder="Ange SKU"
+        pattern="[A-Z]{3}[0-9]{3}"
+        required
+        title="Formatet måste vara tre bokstäver följt av tre siffror."
+        class="border border-black mb-8 rounded p-1 w-1/4"
+      />
+
+      <label for="price" class="mb-1"> Pris </label>
+      <input
+        type="number"
+        id="price"
+        formControlName="price"
+        class="border border-black mb-8 rounded p-1 w-1/4"
+      />
+
+      <label for="quantity" class="mb-1"> Antal </label>
+      <input
+        type="number"
+        id="quantity"
+        formControlName="quantity"
+        class="border border-black mb-8 rounded p-1 w-1/4"
+      />
+
+      <label for="publishedDate" class="mb-1"> Publiseringsdatum </label>
+      <input
+        type="date"
+        id="publishedDate"
+        formControlName="publishedDate"
+        class="border border-black mb-12 rounded p-1 w-1/2"
+      />
+
+      <button
+        class="bg-[#276B6C] hover:bg-[#73B8B7] px-5 py-2.5 rounded-md text-white font-bold"
+        type="submit"
+      >
+        Lägg till
+      </button>
+    </form>
+  </div>
+</div>
