@@ -1,1 +1,6 @@
-<p>searchresult works!</p>
+<h2 class="text-2xl text-center font-bold mb-10" [ngSwitch]="searchResults.length">
+    <ng-container *ngSwitchCase="0">Inga produkter hittades</ng-container>
+    <ng-container *ngSwitchCase="1">Hittade 1 produkt</ng-container>
+    <ng-container *ngSwitchDefault>Hittade {{ searchResults.length }} produkter</ng-container>
+  </h2>
+<app-product-grid  [searchResults]="searchResults" />

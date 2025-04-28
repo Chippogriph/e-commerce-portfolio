@@ -1,0 +1,14 @@
+<div class="border-b border-gray-700 py-3">
+    <button
+      (click)="toggleAccordion()"
+      class="w-full text-left flex justify-between items-center text-3xl font-semibold"
+    >
+      {{ title }}
+      <span>{{ isOpen ? '▲' : '▼' }}</span>
+    </button>
+  
+    <div *ngIf="isOpen" class="mt-2 text-gray-300">
+      <ng-content></ng-content>
+    </div>
+  </div>
+  
