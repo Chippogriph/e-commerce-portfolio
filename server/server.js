@@ -15,7 +15,7 @@ app.use(cors(corsConfig));
 app.use("/api/products/search", searchRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/admin/products", adminRoutes);
+app.use("/api/products", adminRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
