@@ -1,0 +1,39 @@
+<div class="flex flex-col sm:flex-row w-full">
+  <div class="text-center sm:mr-5">
+    <a routerLink="/">
+      <img
+        src="images/Freaky-Fashion-logga-removebg.png"
+        alt="Logga för Freaky Fashion"
+        class="max-w-[300px] sm:w-full h-auto mx-auto"
+    /></a>
+  </div>
+
+  <div class="flex items-center my-7 w-full justify-between">
+    <form
+      (submit)="onSearch($event)"
+      class="flex-1 text-3xl sm:text-xl h-11 rounded-md ml-5 border bg-white border-blue-50 shadow max-w-[450px]"
+    >
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Sök klädesplagg..."
+        name="search"
+        class="w-full h-full px-2"
+      />
+      <button type="submit" class="hidden"></button>
+    </form>
+
+    <div class="flex items-end ml-6 space-x-6 text-4xl">
+      <a
+        href="#"
+        class="fa-solid fa-heart text-[#276B6C] hover:text-[#73B8B7]"
+      ></a>
+
+      <i
+        routerLink="cart"
+        class="fa-solid fa-basket-shopping text-[#276B6C] hover:text-[#73B8B7] relative hover:cursor-pointer"
+      ></i>
+    </div>
+  </div>
+</div>
+<app-navbar />
