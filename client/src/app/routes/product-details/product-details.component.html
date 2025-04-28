@@ -1,1 +1,28 @@
-<p>product-details works!</p>
+<section class="flex flex-col sm:flex-row flex-grow">
+    <div class="relative rounded-lg px-4 pb-4 shadow-lg bg-white my-8 sm:flex-1 md:flex-none">
+      <img
+        src={{product?.url}}
+        alt={{product?.name}}
+        class="object-cover w-full"
+      />
+      <div class="sm:hidden absolute bottom-6 right-6 text-5xl">
+        <i class="fa-regular fa-heart"></i>
+      </div>
+    </div>
+    <div class="my-5 sm:flex-1">
+      <div class="mx-6 mb-8">
+        <h2 class="text-3xl"> {{product?.name}} </h2>
+        <p class="text-gray-500 mb-4"> {{product?.brand}} </p>
+        <p class="text-lg mb-4">{{product?.description}}</p>
+        <p class="text-lg font-bold"> {{product?.price}} kr</p>
+      </div>
+
+      <button
+      (click)="product && addProductToCart(product)"
+        class="bg-[#276B6C] hover:bg-[#73B8B7] text-white font-bold py-2 px-4 rounded w-full sm:w-auto max-w-96 block mx-auto sm:mx-6 hover:cursor-pointer"
+      >
+        Lägg i varukorg
+      </button>
+    </div>
+  </section>
+  <app-product-carousel />
