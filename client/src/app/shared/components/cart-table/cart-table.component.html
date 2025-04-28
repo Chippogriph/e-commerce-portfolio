@@ -1,0 +1,68 @@
+<section class="flex flex-col" *ngIf="cartItems.length > 0">
+  <div class="flex flex-col sm:hidden mb-12">
+    <div
+      *ngFor="let item of cartItems"
+      class="flex border p-4 justify-between items-center relative"
+    >
+      <div>
+        <h3>{{ item.quantity }} x {{ item.name }}</h3>
+        <p>Pris: {{ item.price }} kr</p>
+      </div>
+      <div>
+        <button (click)="updateQuantity(item, -1)" class="px-2 border">
+          −
+        </button>
+        <span class="px-3">{{ item.quantity }}</span>
+        <button (click)="updateQuantity(item, 1)" class="px-2 border">+</button>
+      </div>
+      <div class="mt-auto">
+        <p class="text-xl text-center">{{ item.quantity * item.price }} kr</p>
+      </div>
+      <button
+        (click)="removeItem(item.id)"
+        class="text-[#276B6C] hover:text-[#73B8B7] text-xs absolute top-1 right-2"
+      >
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-12 hidden sm:block">
+    <table class="min-w-full table-auto border">
+      <thead class="bg-gray-200 border">
+        <tr>
+          <th class="px-4 py-2 text-left">Produkt</th>
+          <th class="px-4 py-2 text-left">Antal</th>
+          <th class="px-4 py-2 text-left">Pris</th>
+          <th class="px-4 py-2 text-left">Totalt</th>
+          <th class="px-4 py-2 text-left"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let item of cartItems"
+          class="bg-white border-b hover:bg-gray-50"
+        >
+          <td class="px-4 py-2">{{ item.name }}</td>
+          <td class="px-4 py-2">{{ item.quantity }}</td>
+          <td class="px-4 py-2">{{ item.price }} kr</td>
+          <td class="px-4 py-2">{{ item.price * item.quantity }} kr</td>
+          <td class="px-4 py-2 flex justify-evenly">
+            <button (click)="updateQuantity(item, -1)" class="px-2">−</button>
+            <span>{{ item.quantity }}</span>
+            <button (click)="updateQuantity(item, 1)" class="px-2">+</button>
+            <button
+              (click)="removeItem(item.id)"
+              class="text-[#276B6C] hover:text-[#73B8B7]"
+            >
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section class="flex flex-col text-center" *ngIf="cartItems.length < 1">
+  <h3 class="text-2xl my-10">Inga produkter i varukorgen</h3>
+</section>

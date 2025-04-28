@@ -1,0 +1,12 @@
+<h2 class="text-center text-4xl font-bold mb-12">Varukorgen</h2>
+<app-cart-table />
+<div class="flex justify-center w-full mb-12">
+  <a routerLink="/checkout"
+    ><button
+      class="text-center sm:flex-1 bg-[#276B6C] hover:bg-[#73B8B7] hover:cursor-pointer px-5 py-2.5 no-underline rounded-md text-white text-2xl font-bold max-w-md"
+      *ngIf="showButton"
+    >
+      Till kassan
+    </button></a
+  >
+</div>

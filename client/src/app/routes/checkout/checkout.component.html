@@ -1,1 +1,104 @@
-<p>checkout works!</p>
+<h2 class="text-center text-4xl font-bold mb-12">Kassan</h2>
+<app-cart-table />
+<section class="bg-white">
+    <h3 class="text-xl font-semibold mb-4">Kunduppgifter</h3>
+    <form class="space-y-4">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="firstName" class="block font-medium">
+            Förnamn:
+          </label>
+          <input
+            type="text"
+            name="firstName"
+            id="firstName"
+            class="w-full border p-2 rounded"
+          />
+        </div>
+        <div>
+          <label for="lastName" class="block font-medium">
+            Efternamn:
+          </label>
+          <input
+            type="text"
+            name="lastName"
+            id="lastName"
+
+            class="w-full border p-2 rounded"
+          />
+        </div>
+        <div>
+          <label for="email" class="block font-medium">
+            E-post:
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+
+            class="w-full border p-2 rounded"
+          />
+        </div>
+      </div>
+
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">Adress</legend>
+        <div>
+          <label for="street" class="block font-medium">
+            Gatuadress:
+          </label>
+          <input
+            type="text"
+            name="street"
+            id="street"
+
+            class="w-full border p-2 rounded lg:w-1/2"
+          />
+        </div>
+        <div>
+          <label for="zipCode" class="block font-medium">
+            Postnummer:
+          </label>
+          <input
+            type="text"
+            name="zipCode"
+            id="zipCode"
+
+            class="w-40 border p-2 rounded"
+          />
+        </div>
+        <div>
+          <label for="city" class="block font-medium">
+            Stad:
+          </label>
+          <input
+            type="text"
+            name="city"
+            id="city"
+
+            class="w-1/2 border p-2 rounded lg:w-1/3"
+          />
+        </div>
+      </fieldset>
+
+      <div>
+        <input
+          type="checkbox"
+          id="newsletter"
+          name="newsletter"
+          value="false"
+          class="mr-2"
+        />
+        <label for="newsletter">Jag vill ta emot nyhetsbrev</label>
+      </div>
+
+      <div class="flex justify-center">
+        <button
+          type="submit"
+          class="bg-[#276B6C] hover:bg-[#73B8B7] text-white font-bold py-2 px-4 rounded w-30"
+        >
+          Köp
+        </button>
+      </div>
+    </form>
+  </section>
