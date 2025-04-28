@@ -1,0 +1,14 @@
+<div
+  *ngIf="!isLoading"
+  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+>
+  <app-product-card *ngFor="let product of itemsToDisplay" [product]="product" />
+  <div class="col-span-full text-center mt-4">
+    <button *ngIf="!isLoading && displayedProducts.length < products.length" (click)="loadMore()" class="bg-[#276B6C] hover:bg-[#73B8B7] px-5 py-2.5 rounded-md text-white font-bold">
+    Visa fler
+    </button>
+</div>
+</div>
+
+<p *ngIf="isLoading" class="text-center text-xl">Laddar produkter...</p>
+
