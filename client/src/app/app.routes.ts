@@ -10,6 +10,7 @@ import { CartComponent } from './routes/cart/cart.component';
 import { PublicLayoutComponent } from './layout/public/public-layout/public-layout.component';
 import { AdminLayoutComponent } from './layout/admin/admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './routes/admin/admin-dashboard/admin-dashboard.component';
+import { CategoriesComponent } from './routes/categories/categories.component';
 
 
 export const routes: Routes = [
@@ -22,7 +23,7 @@ export const routes: Routes = [
       { path: 'search', component: SearchresultComponent },
       { path: 'cart', component: CartComponent },
       { path: 'checkout', component: CheckoutComponent },
-      
+      { path: 'categories/:slug', component: CategoriesComponent },
     ],
   },
   {
