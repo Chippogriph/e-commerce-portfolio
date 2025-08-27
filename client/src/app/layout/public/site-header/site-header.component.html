@@ -25,14 +25,20 @@
 
     <div class="flex items-end ml-6 space-x-6 text-4xl">
       <a
-        href="#"
-        class="fa-solid fa-heart text-[#276B6C] hover:text-[#73B8B7]"
+        routerLink="favorites"
+        class="fa-solid fa-heart text-[#276B6C] hover:text-[#73B8B7] hover:cursor-pointer"
       ></a>
 
-      <i
+      <a
         routerLink="cart"
-        class="fa-solid fa-basket-shopping text-[#276B6C] hover:text-[#73B8B7] relative hover:cursor-pointer"
-      ></i>
+        class="fa-solid fa-basket-shopping text-[#276B6C] hover:text-[#73B8B7] hover:cursor-pointer relative"
+        ><span
+          class="text-white text-xs font-bold bg-[#EBB67D] rounded-full flex items-center justify-center w-5 h-5 absolute -top-2 -right-2"
+          *ngIf="cartCount > 0"
+        >
+          {{ cartCount }}
+        </span></a
+      >
     </div>
   </div>
 </div>
