@@ -1,7 +1,5 @@
 <div class="flex">
-  <div class="w-[300px] h-screen border-r-2">
-    <h2 class="p-4 text-2xl">Produkter</h2>
-  </div>
+  <app-sidebar />
   <div class="flex-grow p-5 bg-white">
     <div class="flex justify-between mb-5">
       <h2 class="text-3xl">Produkter</h2>
@@ -30,7 +28,7 @@
       </thead>
       <tbody class="border">
         <tr
-        *ngFor="let product of products">
+        *ngFor="let product of products" class="even:bg-gray-200">
           <td class="pl-2 py-1">{{product.name}}</td>
           <td class="pl-2 py-1">{{product.sku}}</td>
           <td class="pl-2 py-1">{{product.price}}</td>

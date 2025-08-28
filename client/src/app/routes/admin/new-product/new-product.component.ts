@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import {
   FormGroup,
@@ -9,10 +8,16 @@ import {
 import { Title } from '@angular/platform-browser';
 import { Product, ProductService } from '../../../services/product.service';
 import { Router } from '@angular/router';
+import { SidebarComponent } from '../admin-dashboard/sidebar/sidebar.component';
+import {
+  CategoriesService,
+  Category,
+} from '../../../services/categories/categories.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-new-product',
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SidebarComponent],
   templateUrl: './new-product.component.html',
   styleUrl: './new-product.component.css',
 })
@@ -20,8 +25,10 @@ export class NewProductComponent {
   private titleService = inject(Title);
   private productService = inject(ProductService);
   private router = inject(Router);
+  private categoriesService = inject(CategoriesService);
 
   formGroup!: FormGroup;
+  categories: Category[] = [];
 
   ngOnInit() {
     this.titleService.setTitle('Administration');
@@ -40,18 +47,24 @@ export class NewProductComponent {
       price: new FormControl(null),
       quantity: new FormControl(null),
       publishedDate: new FormControl(''),
+      categoryId: new FormControl(null, Validators.required),
+    });
+
+    this.categoriesService.categories$.subscribe({
+      next: (categories) => (this.categories = categories),
     });
   }
 
   onSubmit() {
     if (this.formGroup.valid) {
       const product = this.formGroup.value as Product;
-      
+
       this.productService.addProduct(product).subscribe({
         next: () => {
           this.formGroup.reset();
           this.router.navigate(['/admin/products']);
-        }})
+        },
+      });
     }
   }
 }

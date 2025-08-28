@@ -3,10 +3,11 @@ import { RouterModule } from '@angular/router';
 import { Product, ProductService } from '../../../services/product.service';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from "./sidebar/sidebar.component";
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SidebarComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
 })

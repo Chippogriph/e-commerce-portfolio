@@ -1,8 +1,7 @@
 <div class="flex">
-  <div class="w-[300px] h-screen border border-black-r-2">
-    <h2 class="p-4 text-2xl">Produkter</h2>
-  </div>
+  <app-sidebar />
   <div class="bg-white p-10 text-2xl w-1/2">
+    <h2 class="text-3xl mb-10">Ny produkt</h2>
     <form [formGroup]="formGroup" class="flex flex-col" (ngSubmit)="onSubmit()">
       <label for="name" class="mb-1"> Namn </label>
       <input
@@ -74,6 +73,20 @@
         formControlName="publishedDate"
         class="border border-black mb-12 rounded p-1 w-1/2"
       />
+
+      <label for="category" class="mb-1">Kategori</label>
+      <select
+        id="categoryId"
+        formControlName="categoryId"
+        class="border border-black mb-12 rounded p-1 w-1/2"
+      >
+        <option value="" disabled class="text-gray-400">
+          Välj kategori...
+        </option>
+        <option *ngFor="let category of categories" [ngValue]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
 
       <button
         class="bg-[#276B6C] hover:bg-[#73B8B7] px-5 py-2.5 rounded-md text-white font-bold"
