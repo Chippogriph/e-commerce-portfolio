@@ -1,0 +1,27 @@
+<div class="flex">
+  <app-sidebar />
+  <div class="flex-grow p-5 bg-white">
+    <div class="flex justify-between mb-5">
+      <h2 class="text-3xl">Kategorier</h2>
+
+      <a
+        routerLink="new"
+        class="bg-[#276B6C] hover:bg-[#73B8B7] px-5 py-2.5 no-underline rounded-md text-white font-bold"
+      >
+        Ny kategori
+      </a>
+    </div>
+    <table class="border w-full">
+      <thead class="border text-left bg-[#276B6C] text-white">
+        <tr>
+          <th class="pl-2 py-1">Namn</th>
+        </tr>
+      </thead>
+      <tbody class="border">
+        <tr *ngFor="let category of categories" class="even:bg-gray-200">
+          <td class="pl-2 py-1">{{ category.name }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

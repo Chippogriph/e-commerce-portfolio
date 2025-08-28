@@ -41,9 +41,9 @@ export class CategoriesService {
       });
   }
 
-  addCategory(category: Category): void {
+  addCategory(data: FormData): void {
     this.http
-      .post<Category>(this.apiUrl, category)
+      .post<Category>(`${this.apiUrl}/new`, data)
       .pipe(take(1))
       .subscribe({
         next: (newCategory) => {

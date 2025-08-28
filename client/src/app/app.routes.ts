@@ -11,7 +11,8 @@ import { PublicLayoutComponent } from './layout/public/public-layout/public-layo
 import { AdminLayoutComponent } from './layout/admin/admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './routes/admin/admin-dashboard/admin-dashboard.component';
 import { CategoriesComponent } from './routes/categories/categories.component';
-
+import { AdminCategoriesComponent } from './routes/admin/admin-categories/admin-categories.component';
+import { NewCategoryComponent } from './routes/admin/new-category/new-category.component';
 
 export const routes: Routes = [
   {
@@ -30,9 +31,11 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
-        {path:'products', component: AdminDashboardComponent},
-        { path: 'products/new', component: NewProductComponent },
+      { path: 'products', component: AdminDashboardComponent },
+      { path: 'categories', component: AdminCategoriesComponent },
+      { path: 'products/new', component: NewProductComponent },
+      { path: 'categories/new', component: NewCategoryComponent },
     ],
   },
-  { path: '**', component: NotFoundComponent }
+  { path: '**', component: NotFoundComponent },
 ];

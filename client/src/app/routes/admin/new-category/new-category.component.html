@@ -1,0 +1,47 @@
+<div class="flex">
+  <app-sidebar />
+  <div class="bg-white p-10 text-2xl w-1/2">
+    <h2 class="text-3xl mb-10">Ny kategori</h2>
+
+    <form
+      [formGroup]="formGroup"
+      class="flex flex-col"
+      (ngSubmit)="onSubmit()"
+      enctype="multipart/form-data"
+    >
+      <!-- Namn -->
+      <label for="name" class="mb-1"> Namn </label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="Ange namn"
+        maxlength="25"
+        class="border border-black mb-8 rounded p-1 w-1/2"
+      />
+      <div *ngIf="formGroup.get('name')?.invalid && formGroup.get('name')?.touched" class="text-red-500 text-sm mb-4">
+        Namn är obligatoriskt och får max vara 25 tecken.
+      </div>
+
+      <!-- Bild -->
+      <label for="imageUrl" class="mb-1"> Bild </label>
+      <input
+        type="file"
+        id="imageUrl"
+        accept="image/*"
+        required
+        (change)="onFileSelected($event)"
+        class="border border-black mb-8 rounded p-1 self-start"
+      />
+
+      <!-- Knapp -->
+      <button
+        class="bg-[#276B6C] hover:bg-[#73B8B7] px-5 py-2.5 rounded-md text-white font-bold self-start disabled:opacity-50"
+        type="submit"
+        [disabled]="formGroup.invalid || !selectedFile"
+      >
+        Lägg till
+      </button>
+    </form>
+  </div>
+</div>
