@@ -13,6 +13,9 @@ import { AdminDashboardComponent } from './routes/admin/admin-dashboard/admin-da
 import { CategoriesComponent } from './routes/categories/categories.component';
 import { AdminCategoriesComponent } from './routes/admin/admin-categories/admin-categories.component';
 import { NewCategoryComponent } from './routes/admin/new-category/new-category.component';
+import { MyFavoritesComponent } from './routes/my-favorites/my-favorites.component';
+import { LoginComponent } from './routes/login/login.component';
+import { SignUpComponent } from './routes/sign-up/sign-up.component';
 
 export const routes: Routes = [
   {
@@ -20,11 +23,14 @@ export const routes: Routes = [
     component: PublicLayoutComponent,
     children: [
       { path: '', component: HomeComponent },
+      { path: 'login', component: LoginComponent },
+      { path: 'sign-up', component: SignUpComponent },
       { path: 'products/:slug', component: ProductDetailsComponent },
       { path: 'search', component: SearchresultComponent },
       { path: 'cart', component: CartComponent },
       { path: 'checkout', component: CheckoutComponent },
       { path: 'categories/:slug', component: CategoriesComponent },
+      { path: 'favorites', component: MyFavoritesComponent },
     ],
   },
   {

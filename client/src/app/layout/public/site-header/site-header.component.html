@@ -39,6 +39,16 @@
           {{ cartCount }}
         </span></a
       >
+      <a
+        *ngIf="!(authService.isLoggedIn$ | async)"
+        routerLink="login"
+        class="fa-solid fa-right-to-bracket text-[#276B6C] hover:text-[#73B8B7] hover:cursor-pointer"
+      ></a>
+      <a
+        *ngIf="authService.isLoggedIn$ | async"
+        (click)="logout()"
+        class="fa-solid fa-door-closed text-[#276B6C] hover:text-[#73B8B7] hover:cursor-pointer"
+      ></a>
     </div>
   </div>
 </div>

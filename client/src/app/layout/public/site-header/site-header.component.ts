@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../../services/cart.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-site-header',
@@ -16,6 +17,7 @@ export class SiteHeaderComponent {
   cartCount = 0;
 
   private cartService = inject(CartService);
+  public authService = inject(AuthService);
   private router = inject(Router);
 
   ngOnInit() {
@@ -28,5 +30,8 @@ export class SiteHeaderComponent {
     event.preventDefault();
     this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
     this.searchQuery = '';
+  }
+  logout() {
+    this.authService.logout();
   }
 }
