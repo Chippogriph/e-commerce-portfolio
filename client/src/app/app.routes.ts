@@ -16,6 +16,7 @@ import { NewCategoryComponent } from './routes/admin/new-category/new-category.c
 import { MyFavoritesComponent } from './routes/my-favorites/my-favorites.component';
 import { LoginComponent } from './routes/login/login.component';
 import { SignUpComponent } from './routes/sign-up/sign-up.component';
+import { NewsComponent } from './routes/news/news.component';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,7 @@ export const routes: Routes = [
       { path: 'search', component: SearchresultComponent },
       { path: 'cart', component: CartComponent },
       { path: 'checkout', component: CheckoutComponent },
+      { path: 'news', component: NewsComponent },
       { path: 'categories/:slug', component: CategoriesComponent },
       { path: 'favorites', component: MyFavoritesComponent },
     ],

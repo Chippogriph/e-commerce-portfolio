@@ -1,6 +1,6 @@
 <div class="relative rounded-lg p-4 shadow-2xl bg-white">
   <span
-    *ngIf="product.isNew"
+    *ngIf="showNewBadge && product.isNew"
     class="absolute top-2 left-2 z-10 bg-black text-white text-xl md:text-sm font-bold py-1 px-2 rounded-lg"
   >
     Nyhet
@@ -12,9 +12,17 @@
         alt="{{ product.name }}"
         class="w-full object-cover rounded-t-md"
       />
-      <div class="sm:hidden absolute bottom-4 right-4 text-5xl">
-        <i class="fa-regular fa-heart"></i>
-      </div>
+      <button
+        (click)="
+          toggleFavorite(); $event.preventDefault(); $event.stopPropagation()
+        "
+        class="absolute bottom-4 right-4 text-5xl"
+      >
+        <i *ngIf="isFavorite(); else emptyHeart" class="fa-solid fa-heart"></i>
+        <ng-template #emptyHeart>
+          <i class="fa-regular fa-heart"></i>
+        </ng-template>
+      </button>
     </div>
     <hr class="text-gray-100" />
     <div class="text-2xl sm:text-xl flex justify-between">

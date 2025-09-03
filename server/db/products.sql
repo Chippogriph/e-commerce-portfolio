@@ -1,4 +1,4 @@
-create TABLE products (
+create TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     slug TEXT,
     name TEXT,
@@ -13,12 +13,33 @@ create TABLE products (
     FOREIGN KEY(categoryId) REFERENCES categories(id)
 );
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   imageUrl text NOT NULL,
   slug TEXT UNIQUE NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  isAdmin INTEGER NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS userFavorites (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId INTEGER NOT NULL,
+  productId INTEGER NOT NULL,
+  UNIQUE(userId, productId),
+  FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE
+);
+
+
 
 INSERT INTO categories (name, imageUrl, slug) VALUES
 ("Kläder", "/images/200.svg", "klader"),

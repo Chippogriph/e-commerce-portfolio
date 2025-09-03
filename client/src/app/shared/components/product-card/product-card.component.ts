@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Product } from '../../../services/product.service';
 import { RouterLink } from '@angular/router';
+import { FavoritesService } from '../../../services/favorites/favorites.service';
 
 @Component({
   selector: 'app-product-card',
@@ -14,4 +15,15 @@ import { RouterLink } from '@angular/router';
 })
 export class ProductCardComponent {
   @Input() product: Product = {} as Product;
+  @Input() showNewBadge: boolean = false;
+
+  private favoritesService = inject(FavoritesService)
+
+  toggleFavorite() {
+    this.favoritesService.toggleFavorite(this.product);
+  }
+
+  isFavorite(): boolean {
+    return this.favoritesService.isFavorite(this.product);
+  }
 }

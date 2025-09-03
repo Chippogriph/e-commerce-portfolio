@@ -14,6 +14,7 @@ export interface Product {
   quantity: number;
   publishedDate: string;
   isNew: boolean;
+  isFavorite?: boolean;
 }
 
 @Injectable({

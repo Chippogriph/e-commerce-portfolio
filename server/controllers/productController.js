@@ -1,13 +1,28 @@
 import { db } from "../db/connection.js";
 
-export const getAllProducts = (req, res) => {
+export function getAllProducts(req, res) {
+  const today = new Date();
+
   try {
     const products = db.prepare("SELECT * FROM products").all();
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ error: "Serverfel", details: error.message });
+
+    const productsWithIsNew = products.map((product) => {
+      const publishedDate = new Date(product.publishedDate);
+      const diffInDays = Math.floor(
+        (today.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      return {
+        ...product,
+        isNew: diffInDays <= 7,
+      };
+    });
+
+    res.json(productsWithIsNew);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch products" });
   }
-};
+}
 
 export const getProductBySlug = (req, res) => {
   const { slug } = req.params;
