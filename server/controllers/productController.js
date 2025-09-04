@@ -4,7 +4,9 @@ export function getAllProducts(req, res) {
   const today = new Date();
 
   try {
-    const products = db.prepare("SELECT * FROM products").all();
+    const products = db
+      .prepare(`SELECT * FROM products ORDER BY publishedDate DESC;`)
+      .all();
 
     const productsWithIsNew = products.map((product) => {
       const publishedDate = new Date(product.publishedDate);

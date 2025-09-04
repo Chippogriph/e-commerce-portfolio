@@ -1,9 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { SidebarComponent } from '../admin-dashboard/sidebar/sidebar.component';
-import {
-  CategoriesService,
-  Category,
-} from '../../../services/categories/categories.service';
+import { CategoriesService } from '../../../services/categories/categories.service';
 import {
   FormControl,
   FormGroup,

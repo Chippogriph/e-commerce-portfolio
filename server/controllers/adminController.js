@@ -19,7 +19,7 @@ export const addProduct = (req, res) => {
                 slug,
                 name,
                 description, 
-                url, 
+                imageUrl, 
                 brand, 
                 sku, 
                 price, 

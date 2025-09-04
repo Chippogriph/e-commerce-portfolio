@@ -50,7 +50,7 @@ export class ProductDetailsComponent implements OnInit {
       id: 0,
       slug: product.slug,
       name: product.name,
-      url: product.url,
+      url: product.imageUrl,
       brand: product.brand,
       price: product.price,
       quantity: 1

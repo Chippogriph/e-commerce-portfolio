@@ -29,6 +29,7 @@ export class NewProductComponent {
 
   formGroup!: FormGroup;
   categories: Category[] = [];
+  selectedFile: File | null = null;
 
   ngOnInit() {
     this.titleService.setTitle('Administration');
@@ -55,8 +56,16 @@ export class NewProductComponent {
     });
   }
 
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
   onSubmit() {
-    if (this.formGroup.valid) {
+    console.log('Clicked');
+    console.log('FormGroup valid:', this.formGroup.valid);
+    console.log('FormGroup value:', this.formGroup.value);
+    console.log('Selected file:', this.selectedFile);
+    if (this.formGroup.valid && this.selectedFile) {
       const product = this.formGroup.value as Product;
 
       this.productService.addProduct(product).subscribe({
