@@ -4,10 +4,11 @@ import { ProductGridComponent } from '../../shared/components/product-grid/produ
 import { Product, ProductService } from '../../services/product.service';
 import { Title } from '@angular/platform-browser';
 import { FavoritesService } from '../../services/favorites/favorites.service';
+import { SpotsComponent } from './spots/spots.component';
 
 @Component({
   selector: 'app-home',
-  imports: [ProductGridComponent, HeroComponent],
+  imports: [ProductGridComponent, HeroComponent, SpotsComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

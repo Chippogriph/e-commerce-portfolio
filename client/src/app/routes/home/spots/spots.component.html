@@ -1,0 +1,22 @@
+<section class="hidden md:grid grid-cols-3 gap-10 mb-10">
+  <a
+    [routerLink]="'/categories/' + categorie.slug"
+    *ngFor="let categorie of categories$ | async"
+    class="group"
+  >
+    <div class="relative aspect-[5/3]">
+      <img
+        src="{{ categorie.imageUrl }}"
+        alt="{{ categorie.name }}"
+        class="w-full h-full object-cover rounded-lg shadow-2xl transition-opacity duration-300 group-hover:opacity-50"
+      />
+      <span
+        class="absolute bottom-4 left-1/2 -translate-x-1/2 -translate-y-1/2  
+               bg-gray-300 border-[#276B6C] border-2 text-[#276B6C] 
+               font-bold text-4xl px-2 py-1 rounded"
+      >
+        {{ categorie.name }}
+      </span>
+    </div>
+  </a>
+</section>
