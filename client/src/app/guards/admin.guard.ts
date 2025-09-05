@@ -20,7 +20,7 @@ export class AdminGuard implements CanActivate {
     take(1),
     map(([isAdmin]) => {
       if (!isAdmin) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/404']);
         return false;
       }
       return true;
