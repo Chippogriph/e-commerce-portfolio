@@ -20,13 +20,14 @@
         placeholder="Ange beskrivning"
         class="border border-black mb-8 rounded p-1 h-44"
       ></textarea>
-
-      <label for="url" class="mb-1"> Bild </label>
+      <!-- TODO: Ändra så att man lägger till bild från dator/laddar upp -->
+      <label for="imageUrl" class="mb-1"> Bild </label>
       <input
-        type="url"
-        id="url"
-        formControlName="url"
+        type="file"
+        id="imageUrl"
+        accept="image/*"
         required
+        (change)="onFileSelected($event)"
         class="border border-black mb-8 rounded p-1"
       />
 

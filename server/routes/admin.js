@@ -5,6 +5,6 @@ import { uploadProductImage } from "../middleware/multer-upload.js";
 
 const router = express.Router();
 
-router.post('/new',requireAdmin, uploadProductImage.single("image"), addProduct);
+router.post('/new',requireAdmin, uploadProductImage.single("imageUrl"), addProduct);
 
 export default router;

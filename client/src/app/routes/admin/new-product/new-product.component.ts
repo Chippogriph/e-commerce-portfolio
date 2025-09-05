@@ -39,7 +39,6 @@ export class NewProductComponent {
         Validators.maxLength(25),
       ]),
       description: new FormControl(''),
-      url: new FormControl('', Validators.required),
       brand: new FormControl(''),
       sku: new FormControl('', [
         Validators.required,
@@ -61,14 +60,18 @@ export class NewProductComponent {
   }
 
   onSubmit() {
-    console.log('Clicked');
-    console.log('FormGroup valid:', this.formGroup.valid);
-    console.log('FormGroup value:', this.formGroup.value);
-    console.log('Selected file:', this.selectedFile);
     if (this.formGroup.valid && this.selectedFile) {
-      const product = this.formGroup.value as Product;
+      const formData = new FormData();
 
-      this.productService.addProduct(product).subscribe({
+      // Lägg till alla FormControl-värden
+      Object.keys(this.formGroup.value).forEach((key) => {
+        formData.append(key, this.formGroup.get(key)?.value);
+      });
+
+      // Lägg till filen
+      formData.append('imageUrl', this.selectedFile);
+
+      this.productService.addProduct(formData).subscribe({
         next: () => {
           this.formGroup.reset();
           this.router.navigate(['/admin/products']);

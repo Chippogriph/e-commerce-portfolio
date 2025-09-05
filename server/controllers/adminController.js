@@ -5,7 +5,6 @@ export const addProduct = (req, res) => {
     const {
       name,
       description,
-      url,
       brand,
       sku,
       price,
@@ -13,27 +12,32 @@ export const addProduct = (req, res) => {
       publishedDate,
       categoryId,
     } = req.body;
+    if (!req.file) return res.status(400).json({ error: "Ingen bild skickad" });
     const slug = formatSlug(name);
+
+    // Filen som laddades upp
+    const imageUrl = "/images/products/" + req.file.filename;
+
     const statement = db.prepare(`
-            INSERT INTO products (
-                slug,
-                name,
-                description, 
-                imageUrl, 
-                brand, 
-                sku, 
-                price, 
-                quantity, 
-                publishedDate,
-                categoryId
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
+      INSERT INTO products (
+        slug,
+        name,
+        description, 
+        imageUrl, 
+        brand, 
+        sku, 
+        price, 
+        quantity, 
+        publishedDate,
+        categoryId
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
 
     statement.run(
       slug,
       name,
       description,
-      url,
+      imageUrl,
       brand,
       sku,
       price,
@@ -44,6 +48,7 @@ export const addProduct = (req, res) => {
 
     res.status(201).json({ message: "Produkt tillagd" });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Något gick fel vid tillägg av produkt" });
   }
 };
