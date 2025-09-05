@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { db } from "../db/connection.js";
+import { migrateGuestFavoritesToUser } from "../utils/favorites.js";
 
 // Logga in användare
 export async function login(req, res) {
@@ -12,11 +13,14 @@ export async function login(req, res) {
   if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
   req.session.userId = user.id;
+  console.log(req.session.userId)
+  req.session.isAdmin = user.isAdmin === 1; // 🔑 spara adminstatus i sessionen
   if (!req.session.cart) req.session.cart = [];
 
-  migrateFavoritesToUser(user.id, req.session);
+  migrateGuestFavoritesToUser(req.session);
 
-  res.json({ message: "Logged in" });
+  console.log(req.session.isAdmin);
+  res.json({ message: "Logged in", isAdmin: req.session.isAdmin });
 }
 
 // Logga ut användare
@@ -32,6 +36,7 @@ export function logout(req, res) {
 export function getSession(req, res) {
   res.json({
     userId: req.session.userId || null,
+    isAdmin: req.session.isAdmin || false,
     cart: req.session.cart || [],
   });
 }
@@ -59,9 +64,9 @@ export async function registerUser(req, res) {
 
   try {
     const stmt = db.prepare(
-      "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)"
+      "INSERT INTO users (username, email, password_hash, isAdmin) VALUES (?, ?, ?, ?)"
     );
-    const info = stmt.run(username, email, passwordHash);
+    const info = stmt.run(username, email, passwordHash, 0);
 
     // Returnera ny användare (utan lösenord)
     res.status(201).json({
@@ -73,19 +78,4 @@ export async function registerUser(req, res) {
     console.error(err);
     res.status(500).json({ message: "Failed to create user" });
   }
-}
-
-function migrateFavoritesToUser(userId, session) {
-  if (!session.favorites || session.favorites.length === 0) return;
-
-  const insert = db.prepare(
-    "INSERT OR IGNORE INTO userFavorites (userId, productId) VALUES (?, ?)"
-  );
-
-  session.favorites.forEach((productId) => {
-    insert.run(userId, productId);
-  });
-
-  // Rensa efter migrering
-  session.favorites = [];
 }

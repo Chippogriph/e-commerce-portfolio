@@ -34,7 +34,7 @@
       >
         Logga in
       </button>
-    
+    <p *ngIf="loginError" class="text-red-500 mt-2">{{ loginError }}</p>
   </form>
 
   <div class="mt-10 flex flex-col w-1/3">

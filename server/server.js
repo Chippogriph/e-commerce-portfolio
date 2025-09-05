@@ -1,6 +1,7 @@
 import express from "express";
 import session from "express-session";
 import cors from "cors";
+import path from "path";
 import connectSqlite3 from "connect-sqlite3";
 import corsConfig from "./config/corsConfig.js";
 import productRoutes from "./routes/products.js";
@@ -17,6 +18,7 @@ const port = 8000;
 const SQLiteStore = connectSqlite3(session);
 
 app.use(express.json());
+app.use("/images", express.static(path.join(process.cwd(), "public/images")));
 app.use(cors(corsConfig));
 app.use(
   session({

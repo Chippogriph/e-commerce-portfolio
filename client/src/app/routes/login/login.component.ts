@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,9 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
   formGroup!: FormGroup;
+  loginError: string | null = null;
 
   ngOnInit() {
     this.formGroup = new FormGroup({
@@ -26,9 +28,22 @@ export class LoginComponent {
     });
   }
   onSubmit() {
+    this.loginError = null;
+
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.authService.login(email, password);
+
+      this.authService.login(email, password).subscribe({
+        next: () => {
+          // ✅ State sätts i AuthService (via tap), så vi behöver bara navigera
+          this.router.navigate(['/']);
+        },
+        error: () => {
+          this.loginError = 'Fel E-mail eller lösenord';
+        },
+      });
+    } else {
+      this.loginError = 'Formuläret är ogiltigt';
     }
   }
 }
