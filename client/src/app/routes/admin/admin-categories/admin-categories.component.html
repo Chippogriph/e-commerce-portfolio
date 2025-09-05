@@ -15,11 +15,18 @@
       <thead class="border text-left bg-[#276B6C] text-white">
         <tr>
           <th class="pl-2 py-1">Namn</th>
+          <th></th>
         </tr>
       </thead>
       <tbody class="border">
         <tr *ngFor="let category of categories" class="even:bg-gray-200">
           <td class="pl-2 py-1">{{ category.name }}</td>
+          <td class="flex justify-evenly pt-2">
+            <i
+              (click)="removeCategory(category.id)"
+              class="fa-solid fa-trash-can text-[#276B6C] hover:text-[#73B8B7] hover:cursor-pointer"
+            ></i>
+          </td>
         </tr>
       </tbody>
     </table>

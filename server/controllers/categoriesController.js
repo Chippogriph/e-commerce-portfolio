@@ -1,6 +1,4 @@
 import { db } from "../db/connection.js";
-import multer from "multer";
-import path from "path";
 
 export const getAllCategories = (req, res) => {
   try {
@@ -51,27 +49,32 @@ export const addCategory = (req, res) => {
       VALUES (?, ?, ?)
     `);
 
-    statement.run(name, slug, imageUrl);
+    const result = statement.run(name, slug, imageUrl); // <--- Spara resultatet här!
 
-    res.status(201).json({ message: "Kategori tillagd", name, slug, imageUrl });
+    res.status(201).json({
+      id: result.lastInsertRowid, // nu finns id
+      name,
+      slug,
+      imageUrl,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Något gick fel vid tillägg av kategori" });
   }
 };
 
-// Multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images/categories"); // Spara i denna mapp
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + path.extname(file.originalname);
-    cb(null, uniqueName);
-  },
-});
+export const removeCategory = (req, res) => {
+  const { id } = req.params;
 
-export const uploadCategoryImage = multer({ storage });
+  const category = db.prepare("SELECT * FROM categories WHERE id = ?").get(id);
+  if (!category) {
+    return res.status(404).json({ error: "Produkt inte hittad" });
+  }
+
+  db.prepare("DELETE FROM categories WHERE id = ?").run(id);
+  const updatedcategories = db.prepare("SELECT * FROM categories").all();
+  res.json(updatedcategories);
+};
 
 function formatSlug(text) {
   return text

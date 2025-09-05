@@ -6,6 +6,7 @@ import { Product } from '../product.service';
 export interface Category {
   id: number;
   name: string;
+  imageUrl: string;
   slug: string;
 }
 
@@ -51,6 +52,21 @@ export class CategoriesService {
           this.categoriesSubject.next([...current, newCategory]);
         },
         error: (err) => console.error('Fel vid skapande av kategori:', err),
+      });
+  }
+
+  removeCategory(categoryId: number) {
+    this.http
+      .delete(`${this.apiUrl}/remove/${categoryId}`)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          const updated = this.categoriesSubject.value.filter(
+            (c) => c.id !== categoryId
+          );
+          this.categoriesSubject.next(updated);
+        },
+        error: (err) => console.error('Fel vid radering av kategori:', err),
       });
   }
 }
