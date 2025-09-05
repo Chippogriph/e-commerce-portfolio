@@ -93,12 +93,13 @@
       </div>
 
       <div class="flex justify-center">
-        <button
-          type="submit"
+        <a routerLink="/order-confirmation"><button
+          type="button"
+          (click)="onCheckout()"
           class="bg-[#276B6C] hover:bg-[#73B8B7] text-white font-bold py-2 px-4 rounded w-30"
         >
           Köp
-        </button>
+        </button></a>
       </div>
     </form>
   </section>

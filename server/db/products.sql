@@ -39,6 +39,36 @@ CREATE TABLE IF NOT EXISTS userFavorites (
   FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE
 );
 
+create TABLE cart (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER NULL,
+    slug TEXT,
+    name TEXT,
+    url TEXT,
+    brand TEXT,
+    price INTEGER,
+    quantity INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId INTEGER NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  total INTEGER,
+  FOREIGN KEY(userId) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS orderItems (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  orderId INTEGER NOT NULL,
+  productId INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
+  price INTEGER NOT NULL,
+  FOREIGN KEY(orderId) REFERENCES orders(id) ON DELETE CASCADE,
+  FOREIGN KEY(productId) REFERENCES products(id)
+);
+
+
 
 
 INSERT INTO categories (name, imageUrl, slug) VALUES

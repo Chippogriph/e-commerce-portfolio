@@ -1,27 +1,33 @@
 import bcrypt from "bcrypt";
 import { db } from "../db/connection.js";
 import { migrateGuestFavoritesToUser } from "../utils/favorites.js";
+import { migrateGuestCart } from "../utils/cart.js";
 
 // Logga in användare
 export async function login(req, res) {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
+    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    const match = await bcrypt.compare(password, user.password_hash);
+    if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-  const match = await bcrypt.compare(password, user.password_hash);
-  if (!match) return res.status(401).json({ message: "Invalid credentials" });
+    req.session.userId = user.id;
+    req.session.isAdmin = user.isAdmin === 1;
+    if (!req.session.cart) req.session.cart = [];
 
-  req.session.userId = user.id;
-  console.log(req.session.userId)
-  req.session.isAdmin = user.isAdmin === 1; // 🔑 spara adminstatus i sessionen
-  if (!req.session.cart) req.session.cart = [];
+    migrateGuestFavoritesToUser(req.session);
+    migrateGuestCart(req.session.userId, req.session.cart);
+    req.session.cart = [];
 
-  migrateGuestFavoritesToUser(req.session);
-
-  console.log(req.session.isAdmin);
-  res.json({ message: "Logged in", isAdmin: req.session.isAdmin });
+    res.json({ message: "Logged in", isAdmin: req.session.isAdmin });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 }
+
 
 // Logga ut användare
 export function logout(req, res) {
@@ -29,15 +35,6 @@ export function logout(req, res) {
     if (err) return res.status(500).json({ message: "Logout failed" });
     res.clearCookie("connect.sid");
     res.json({ message: "Logged out" });
-  });
-}
-
-// Hämta sessioninfo
-export function getSession(req, res) {
-  res.json({
-    userId: req.session.userId || null,
-    isAdmin: req.session.isAdmin || false,
-    cart: req.session.cart || [],
   });
 }
 

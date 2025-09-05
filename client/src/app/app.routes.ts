@@ -18,6 +18,7 @@ import { LoginComponent } from './routes/login/login.component';
 import { SignUpComponent } from './routes/sign-up/sign-up.component';
 import { NewsComponent } from './routes/news/news.component';
 import { AdminGuard } from './guards/admin.guard';
+import { OrderConfirmationComponent } from './routes/order-confirmation/order-confirmation.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,7 @@ export const routes: Routes = [
       { path: 'news', component: NewsComponent },
       { path: 'categories/:slug', component: CategoriesComponent },
       { path: 'favorites', component: MyFavoritesComponent },
+      { path: 'order/confirmation', component: OrderConfirmationComponent },
     ],
   },
   {

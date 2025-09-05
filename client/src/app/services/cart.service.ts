@@ -62,6 +62,15 @@ export class CartService {
     );
   }
 
+  checkout(): Observable<any> {
+  return this.http.post(`${this.apiUrl}/checkout`, {}).pipe(
+    tap(() => {
+      this.loadCartCount(); // uppdatera varukorgsikonen
+    })
+  );
+}
+
+
   private loadCartCount() {
     this.http.get<CartItems[]>(this.apiUrl).subscribe((items) => {
       const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);
