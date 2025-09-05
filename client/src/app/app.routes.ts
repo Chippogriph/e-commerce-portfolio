@@ -17,6 +17,7 @@ import { MyFavoritesComponent } from './routes/my-favorites/my-favorites.compone
 import { LoginComponent } from './routes/login/login.component';
 import { SignUpComponent } from './routes/sign-up/sign-up.component';
 import { NewsComponent } from './routes/news/news.component';
+import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
+    canActivate: [AdminGuard],
     children: [
       { path: 'products', component: AdminDashboardComponent },
       { path: 'categories', component: AdminCategoriesComponent },
