@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE IF NOT EXISTS userFavorites (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   userId INTEGER NOT NULL,
@@ -72,9 +71,9 @@ CREATE TABLE IF NOT EXISTS orderItems (
 
 
 INSERT INTO categories (name, imageUrl, slug) VALUES
-("Dam", "/images//categories/200.svg", "dam"),
-("Herr", "/images//categories/200.svg", "herr"),
-("Barn", "/images//categories/200.svg", "barn");
+("Dam", "/images/categories/200.svg", "dam"),
+("Herr", "/images/categories/200.svg", "herr"),
+("Barn", "/images/categories/200.svg", "barn");
 
 INSERT INTO products (slug, name, description, imageUrl, brand, sku, price, quantity, publishedDate, categoryId) VALUES
 ("gra-doskalle", "Grå döskalle", "En snygg grå t-shirt med tryck av en döskalle.", "/images/products/gra-doskalle.jpg", "Döskalle", "GGG111", 199, 20, "2025-02-22", 2),
