@@ -11,7 +11,7 @@ Skillnaden med detta projekt är dock att fokus har legat mer på backend.
 - **client/** – Angular-applikationen (frontend)
 - **server/** – Express-servern och databasen (backend)
 
-## 🚀 Installation & Körning
+## 🚀 Installation
 
 1. Klona projektet
    ```bash
@@ -29,6 +29,8 @@ Skillnaden med detta projekt är dock att fokus har legat mer på backend.
 
    ```
 
+### Backend
+
 3. Installera beroenden för backend
 
    ```bash
@@ -37,15 +39,46 @@ Skillnaden med detta projekt är dock att fokus har legat mer på backend.
 
    ```
 
-4. Starta backend-servern
+### Miljövariabler
+För att kunna skapa ett admin-konto med seed-scriptet behöver du skapa en `.env`-fil i server-mappen med de variabler som projektet förväntar sig.  
+  
+Exempel på innehåll (byt ut värdena mot dina egna):  
+ADMIN_USERNAME=your-admin-username  
+ADMIN_PASSWORD=your-admin-password  
+
+- `.env` används av `seedAdmin.js` för att lägga till ett admin-konto i databasen.
+- Den här filen **ska inte committas** eftersom den innehåller känslig information.
+
+
+### Databas
+
+Backend använder SQLite via `better-sqlite3`. För att projektet ska fungera korrekt måste databasen skapas och initialiseras med testdata samt ett admin-konto.
+
+1. Skapa en tom SQLite-databas
+
+   ```bash
+   node -e "require('better-sqlite3')('db/freaky-fashion.db')"
+
+   ```
+
+2. Skapa tabeller och populera med testdata
+
+   ```bash
+   node utils/initDb.js
+   node utils/seedAdmin.js
+
+   ```
+
+## Körning
+
+1. Starta backend-servern
 
    ```bash
    cd server
    npm start
-
    ```
 
-5. Starta frontend-applikationen
+2. Starta frontend-applikationen
 
    ```bash
    cd client
@@ -53,22 +86,25 @@ Skillnaden med detta projekt är dock att fokus har legat mer på backend.
 
    ```
 
-6. Öppna applikationen i webbläsaren
+3. Öppna applikationen i webbläsaren
    ```bash
    http://localhost:4200
    ```
 
 ## 🛠️ Teknologier
-    - Angular
-    - Tailwind CSS
-    - Node.js / Express
-    - SQLite
+
+   - Angular
+   - Tailwind CSS
+   - Node.js / Express
+   - SQLite
 
 ## 📑 Funktionalitet
-    - Visa produkter
-    - Visa produkter baserat på kategorier och om det är en nyhet
-    - Söka efter produkter
-    - Visa och hantera favoriter
-    - Lägg till i varukorg
-    - Hantera beställning
-    - Enkel adminvy för produkter och kategorier
+
+   - Visa produkter
+   - Visa produkter baserat på kategorier och om det är en nyhet
+   - Söka efter produkter
+   - Visa och hantera favoriter
+   - Lägg till i varukorg
+   - Hantera beställning
+   - Enkel adminvy för produkter och kategorier
+````
