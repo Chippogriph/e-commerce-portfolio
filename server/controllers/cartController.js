@@ -1,5 +1,12 @@
 // controllers/cartController.js
 import { db } from "../db/connection.js";
+import {
+  createOrder,
+  getCartItems,
+  addOrderItems,
+  updateOrderTotal,
+  clearCart,
+} from "../utils/orders.js";
 
 // GET /api/cart
 export function getCart(req, res) {
@@ -140,14 +147,43 @@ export function removeFromCart(req, res) {
   }
 }
 
+// 🔹 Huvudfunktion: checkout
 export function checkout(req, res) {
   try {
-    if (req.session.userId) {
-      db.prepare("DELETE FROM cart WHERE userId = ?").run(req.session.userId);
-    } else {
-      req.session.cart = [];
+    const userId = req.session.userId || null;
+
+    // 1. Hämta cart
+    const cartItems = getCartItems(userId, req.session);
+    if (!cartItems.length) {
+      return res.status(400).json({ error: "Varukorgen är tom" });
     }
-    res.json({ success: true, message: "Köp genomfört, varukorgen är nu tom." });
+
+    // 2. Skapa order
+    const orderId = createOrder(userId);
+
+    // 3. Lägg till orderItems + uppdatera lager
+    const total = addOrderItems(orderId, cartItems);
+
+    // 4. Uppdatera orderns totalsumma
+    updateOrderTotal(orderId, total);
+
+    // 5. Töm cart
+    clearCart(userId, req.session);
+
+    // 6. Returnera order
+    const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(orderId);
+    const orderItems = db
+      .prepare(
+        `
+        SELECT orderItems.id AS orderItemId, orderItems.orderId, orderItems.quantity, orderItems.price, orderItems.quantity * orderItems.price AS subtotal,
+                products.id AS productId, products.name, products.imageUrl
+        FROM orderItems
+        JOIN products ON orderItems.productId = products.id
+        WHERE orderItems.orderId = ?`
+      )
+      .all(orderId);
+
+    res.json({ success: true, order, orderItems });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to checkout" });

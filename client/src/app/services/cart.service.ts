@@ -62,13 +62,20 @@ export class CartService {
     );
   }
 
-  checkout(): Observable<any> {
-  return this.http.post(`${this.apiUrl}/checkout`, {}).pipe(
-    tap(() => {
-      this.loadCartCount(); // uppdatera varukorgsikonen
-    })
+checkout(orderData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  street: string;
+  zipCode: string;
+  city: string;
+  newsletter: boolean;
+}): Observable<any> {
+  return this.http.post(`${this.apiUrl}/checkout`, orderData).pipe(
+    tap(() => { this.loadCartCount(); })
   );
 }
+
 
 
   private loadCartCount() {

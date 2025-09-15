@@ -13,3 +13,4 @@ export const migrateGuestCart = (userId, sessionCart) => {
     }
   });
 };
+
