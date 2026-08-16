@@ -3,12 +3,15 @@ import { Component, inject, Input } from '@angular/core';
 import { Product } from '../../../services/product.service';
 import { RouterLink } from '@angular/router';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
+import { FullImageUrlPipe } from '../../pipes/full-image-url.pipe';
+
 
 @Component({
   selector: 'app-product-card',
   imports: [
     CommonModule,
-    RouterLink
+    RouterLink,
+    FullImageUrlPipe
   ],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
