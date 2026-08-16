@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../../enviroments/enviroments.prod';
 
 export interface CartItems {
   id: number;
@@ -16,7 +17,7 @@ export interface CartItems {
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:4200/api/cart';
+  private apiUrl = `${environment.apiUrl}/api/cart`;
   private http = inject(HttpClient);
 
   private cartCount = new BehaviorSubject<number>(0);

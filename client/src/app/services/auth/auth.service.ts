@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../enviroments/enviroments.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:4200/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
   private http = inject(HttpClient);
   private router = inject(Router);
 

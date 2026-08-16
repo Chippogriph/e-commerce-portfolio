@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { Product } from '../product.service';
+import { environment } from '../../../enviroments/enviroments.prod';
 
 export interface Category {
   id: number;
@@ -15,7 +16,7 @@ export interface Category {
 })
 export class CategoriesService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/categories';
+  private apiUrl = `${environment.apiUrl}/api/categories`;
 
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
   categories$ = this.categoriesSubject.asObservable();

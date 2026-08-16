@@ -2,12 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../product.service';
+import { environment } from '../../../enviroments/enviroments.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavoritesService {
-  private apiUrl = 'http://localhost:4200/api/favorites';
+  private apiUrl = `${environment.apiUrl}/api/favorites`;
   private http = inject(HttpClient);
 
   private favoritesList = new BehaviorSubject<Product[]>([]);
