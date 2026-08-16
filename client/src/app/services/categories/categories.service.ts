@@ -15,7 +15,7 @@ export interface Category {
 })
 export class CategoriesService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:4200/api/categories';
+  private apiUrl = '/api/categories';
 
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
   categories$ = this.categoriesSubject.asObservable();

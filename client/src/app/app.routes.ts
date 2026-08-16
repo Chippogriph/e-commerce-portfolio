@@ -43,6 +43,7 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [AdminGuard],
     children: [
+      { path: '', redirectTo: 'products', pathMatch: 'full' },
       { path: 'products', component: AdminDashboardComponent },
       { path: 'categories', component: AdminCategoriesComponent },
       { path: 'products/new', component: NewProductComponent },

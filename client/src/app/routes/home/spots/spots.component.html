@@ -1,7 +1,7 @@
 <section class="hidden md:grid grid-cols-3 gap-10 mb-10">
   <a
     [routerLink]="'/categories/' + categorie.slug"
-    *ngFor="let categorie of categories$ | async | slice : 0 : 4"
+    *ngFor="let categorie of categories$ | async | slice : 0 : 3"
     class="group"
   >
     <div class="relative aspect-[5/3]">
