@@ -1,8 +1,0 @@
-# Databases
-/db/*.db
-/db/sessions.sqlite
-
-
-# Files
-node_modules
-

@@ -13,7 +13,7 @@ import authRoutes from "./routes/auth.js"
 import favoritesRoutes from './routes/favorites.js';
 
 const app = express();
-const port = 8000;
+const PORT = process.env.PORT || 8000;
 
 const SQLiteStore = connectSqlite3(session);
 
@@ -26,7 +26,7 @@ app.use(
       db: "sessions.sqlite",
       dir: "./db",
     }),
-    secret: "keyboard cat",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -46,6 +46,6 @@ app.use("/api/auth", authRoutes);
 app.use('/api/favorites', favoritesRoutes);
 
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on ${PORT}`);
 });
