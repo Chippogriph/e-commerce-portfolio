@@ -1,4 +1,3 @@
-import { db } from "../db/connection.js";
 import supabase from "../config/supabase.js";
 
 export async function getAllProducts(req, res) {
