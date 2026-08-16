@@ -1,25 +1,41 @@
 // controllers/favoritesController.js
-import { db } from "../db/connection.js"; // Din SQLite-anslutning
+import supabase from "../config/supabase.js";
 
 // GET /api/favorites
-export function getFavorites(req, res) {
+export async function getFavorites(req, res) {
   try {
     if (req.session.userId) {
-      // 🔹 Hämta från user_favorites-tabellen
-      const query = `
-        SELECT products.*
-        FROM products
-        JOIN userFavorites ON userFavorites.productId = products.id
-        WHERE userFavorites.userId = ?`;
-      const favoritesFull = db.prepare(query).all(req.session.userId);
+      // 🔹 Hämta ids från userFavorites, sedan produkterna
+      const { data: favRows, error: favError } = await supabase
+        .from("userFavorites")
+        .select("productId")
+        .eq("userId", req.session.userId);
+
+      if (favError) throw favError;
+
+      const productIds = favRows.map((row) => row.productId);
+      if (productIds.length === 0) return res.json([]);
+
+      const { data: favoritesFull, error: productsError } = await supabase
+        .from("products")
+        .select("*")
+        .in("id", productIds);
+
+      if (productsError) throw productsError;
+
       return res.json(favoritesFull);
     } else {
       // 🔹 Guest → hämta från session
       const favoriteIds = req.session.favorites || [];
       if (favoriteIds.length === 0) return res.json([]);
-      const placeholders = favoriteIds.map(() => "?").join(",");
-      const query = `SELECT * FROM products WHERE id IN (${placeholders})`;
-      const favoritesFull = db.prepare(query).all(...favoriteIds);
+
+      const { data: favoritesFull, error } = await supabase
+        .from("products")
+        .select("*")
+        .in("id", favoriteIds);
+
+      if (error) throw error;
+
       return res.json(favoritesFull);
     }
   } catch (err) {
@@ -29,17 +45,20 @@ export function getFavorites(req, res) {
 }
 
 // POST /api/favorites
-export function addFavorite(req, res) {
+export async function addFavorite(req, res) {
   const { productId } = req.body;
   try {
-    console.log("Session user:", req.session.userId);
-console.log("ProductId:", productId);
-
     if (req.session.userId) {
-      // 🔹 Lägg till i user_favorites-tabellen
-      db.prepare(
-        "INSERT OR IGNORE INTO userFavorites (userId, productId) VALUES (?, ?)"
-      ).run(req.session.userId, productId);
+      // 🔹 Lägg till i userFavorites-tabellen (kräver unik constraint på userId+productId
+      // för att ignoreDuplicates ska fungera som "INSERT OR IGNORE")
+      const { error } = await supabase
+        .from("userFavorites")
+        .upsert(
+          { userId: req.session.userId, productId },
+          { onConflict: "userId,productId", ignoreDuplicates: true }
+        );
+
+      if (error) throw error;
       return res.json({ success: true });
     } else {
       // 🔹 Guest → spara i session
@@ -56,15 +75,18 @@ console.log("ProductId:", productId);
 }
 
 // DELETE /api/favorites/:id
-export function removeFavorite(req, res) {
+export async function removeFavorite(req, res) {
   const id = parseInt(req.params.id, 10);
-  console.log(id)
   try {
     if (req.session.userId) {
-      // 🔹 Radera från user_favorites-tabellen
-      db.prepare(
-        "DELETE FROM userFavorites WHERE userId = ? AND productId = ?"
-      ).run(req.session.userId, id);
+      // 🔹 Radera från userFavorites-tabellen
+      const { error } = await supabase
+        .from("userFavorites")
+        .delete()
+        .eq("userId", req.session.userId)
+        .eq("productId", id);
+
+      if (error) throw error;
       return res.json({ success: true });
     } else {
       // 🔹 Guest → ta bort från session

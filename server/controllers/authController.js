@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
 import { migrateGuestFavoritesToUser } from "../utils/favorites.js";
 import { migrateGuestCart } from "../utils/cart.js";
 
@@ -7,18 +7,27 @@ import { migrateGuestCart } from "../utils/cart.js";
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
-    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (error) throw error;
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
     req.session.userId = user.id;
-    req.session.isAdmin = user.isAdmin === 1;
+    req.session.isAdmin = user.isAdmin === true || user.isAdmin === 1;
     if (!req.session.cart) req.session.cart = [];
 
-    migrateGuestFavoritesToUser(req.session);
-    migrateGuestCart(req.session.userId, req.session.cart);
+    // OBS: dessa två funktioner måste också konverteras till Supabase-anrop
+    // (de importeras från utils/favorites.js och utils/cart.js, som inte var med i uppladdningen)
+    await migrateGuestFavoritesToUser(req.session);
+    await migrateGuestCart(req.session.userId, req.session.cart);
     req.session.cart = [];
 
     res.json({ message: "Logged in", isAdmin: req.session.isAdmin });
@@ -27,7 +36,6 @@ export async function login(req, res) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 }
-
 
 // Logga ut användare
 export function logout(req, res) {
@@ -46,31 +54,39 @@ export async function registerUser(req, res) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // Kontrollera om email redan finns
-  const existingUser = db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email);
-  if (existingUser) {
-    return res
-      .status(409)
-      .json({ message: "User with this email already exists" });
-  }
-
-  // Hasha lösenordet
-  const passwordHash = await bcrypt.hash(password, 10);
-
   try {
-    const stmt = db.prepare(
-      "INSERT INTO users (username, email, password_hash, isAdmin) VALUES (?, ?, ?, ?)"
-    );
-    const info = stmt.run(username, email, passwordHash, 0);
+    // Kontrollera om email redan finns
+    const { data: existingUser, error: lookupError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (lookupError) throw lookupError;
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: "User with this email already exists" });
+    }
+
+    // Hasha lösenordet
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const { data: newUser, error: insertError } = await supabase
+      .from("users")
+      .insert({
+        username,
+        email,
+        password_hash: passwordHash,
+        isAdmin: false,
+      })
+      .select("id, username, email")
+      .single();
+
+    if (insertError) throw insertError;
 
     // Returnera ny användare (utan lösenord)
-    res.status(201).json({
-      id: info.lastInsertRowid,
-      username,
-      email,
-    });
+    res.status(201).json(newUser);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to create user" });

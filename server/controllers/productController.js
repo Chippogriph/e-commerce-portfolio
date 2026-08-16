@@ -1,17 +1,24 @@
 import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
 
-export function getAllProducts(req, res) {
+export async function getAllProducts(req, res) {
   const today = new Date();
 
   try {
-    const products = db
-      .prepare(`SELECT * FROM products ORDER BY publishedDate DESC;`)
-      .all();
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("publishedDate", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
 
     const productsWithIsNew = products.map((product) => {
       const publishedDate = new Date(product.publishedDate);
+
       const diffInDays = Math.floor(
-        (today.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24)
+        (today.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24),
       );
       return {
         ...product,
@@ -26,30 +33,77 @@ export function getAllProducts(req, res) {
   }
 }
 
-export const getProductBySlug = (req, res) => {
+export const getProductBySlug = async (req, res) => {
   const { slug } = req.params;
 
   try {
-    const product = db
-      .prepare("SELECT * FROM products WHERE slug = ?")
-      .get(slug);
-    if (!product)
-      return res.status(404).json({ message: "Produkt hittades inte" });
+    const { data: product, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        return res.status(404).json({
+          message: "Produkt hittades inte",
+        });
+      }
+
+      throw error;
+    }
+
     res.json(product);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Serverfel", details: error.message });
   }
 };
 
-export const removeProduct = (req, res) => {
+export const removeProduct = async (req, res) => {
   const { id } = req.params;
 
-  const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
-  if (!product) {
-    return res.status(404).json({ error: "Produkt inte hittad" });
-  }
+  try {
+    const { data: product, error: findError } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-  db.prepare("DELETE FROM products WHERE id = ?").run(id);
-  const updatedProducts = db.prepare("SELECT * FROM products").all();
-  res.json(updatedProducts);
+    if (findError) {
+      if (findError.code === "PGRST116") {
+        return res.status(404).json({
+          error: "Produkt inte hittad",
+        });
+      }
+
+      throw findError;
+    }
+
+    const { error: deleteError } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      throw deleteError;
+    }
+
+    const { data: updatedProducts, error: fetchError } = await supabase
+      .from("products")
+      .select("*");
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    res.json(updatedProducts);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Serverfel",
+      details: error.message,
+    });
+  }
 };

@@ -1,6 +1,6 @@
-import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
 
-export const addProduct = (req, res) => {
+export const addProduct = async (req, res) => {
   try {
     const {
       name,
@@ -12,41 +12,33 @@ export const addProduct = (req, res) => {
       publishedDate,
       categoryId,
     } = req.body;
+
     if (!req.file) return res.status(400).json({ error: "Ingen bild skickad" });
     const slug = formatSlug(name);
 
     // Filen som laddades upp
     const imageUrl = "/images/products/" + req.file.filename;
 
-    const statement = db.prepare(`
-      INSERT INTO products (
+    const { data: product, error } = await supabase
+      .from("products")
+      .insert({
         slug,
         name,
-        description, 
-        imageUrl, 
-        brand, 
-        sku, 
-        price, 
-        quantity, 
+        description,
+        imageUrl,
+        brand,
+        sku,
+        price,
+        quantity,
         publishedDate,
-        categoryId
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+        categoryId,
+      })
+      .select()
+      .single();
 
-    statement.run(
-      slug,
-      name,
-      description,
-      imageUrl,
-      brand,
-      sku,
-      price,
-      quantity,
-      publishedDate,
-      categoryId
-    );
+    if (error) throw error;
 
-    res.status(201).json({ message: "Produkt tillagd" });
+    res.status(201).json({ message: "Produkt tillagd", product });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Något gick fel vid tillägg av produkt" });

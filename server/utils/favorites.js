@@ -1,13 +1,18 @@
-import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
 
-export function migrateGuestFavoritesToUser(session) {
+export async function migrateGuestFavoritesToUser(session) {
   if (session.favorites?.length) {
-    const stmt = db.prepare(
-      "INSERT OR IGNORE INTO userFavorites (userId, productId) VALUES (?, ?)"
-    );
-    session.favorites.forEach((productId) => {
-      stmt.run(session.userId, productId);
-    });
+    const rows = session.favorites.map((productId) => ({
+      userId: session.userId,
+      productId,
+    }));
+
+    const { error } = await supabase
+      .from("userFavorites")
+      .upsert(rows, { onConflict: "userId,productId", ignoreDuplicates: true });
+
+    if (error) throw error;
+
     session.favorites = [];
   }
 }

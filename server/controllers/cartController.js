@@ -1,5 +1,5 @@
 // controllers/cartController.js
-import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
 import {
   createOrder,
   getCartItems,
@@ -9,15 +9,16 @@ import {
 } from "../utils/orders.js";
 
 // GET /api/cart
-export function getCart(req, res) {
+export async function getCart(req, res) {
   try {
     if (req.session.userId) {
       // 🔹 Hämta från cart-tabellen för inloggad användare
-      const query = `
-        SELECT * 
-        FROM cart 
-        WHERE userId = ?`;
-      const cartItems = db.prepare(query).all(req.session.userId);
+      const { data: cartItems, error } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("userId", req.session.userId);
+
+      if (error) throw error;
       return res.json(cartItems);
     } else {
       // 🔹 Gäst → hämta från session
@@ -31,7 +32,7 @@ export function getCart(req, res) {
 }
 
 // POST /api/cart
-export function addToCart(req, res) {
+export async function addToCart(req, res) {
   const { id, slug, name, url, brand, price } = req.body;
 
   if (!slug || !name || !price) {
@@ -41,23 +42,41 @@ export function addToCart(req, res) {
   try {
     if (req.session.userId) {
       // 🔹 Lägg till i cart-tabellen
-      const existing = db
-        .prepare("SELECT * FROM cart WHERE userId = ? AND slug = ?")
-        .get(req.session.userId, slug);
+      const { data: existing, error: findError } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("userId", req.session.userId)
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (findError) throw findError;
 
       if (existing) {
-        db.prepare(
-          "UPDATE cart SET quantity = quantity + 1 WHERE userId = ? AND slug = ?"
-        ).run(req.session.userId, slug);
+        const { error: updateError } = await supabase
+          .from("cart")
+          .update({ quantity: existing.quantity + 1 })
+          .eq("userId", req.session.userId)
+          .eq("slug", slug);
+        if (updateError) throw updateError;
       } else {
-        db.prepare(
-          "INSERT INTO cart (userId, slug, name, url, brand, price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?)"
-        ).run(req.session.userId, slug, name, url, brand, price, 1);
+        const { error: insertError } = await supabase.from("cart").insert({
+          userId: req.session.userId,
+          slug,
+          name,
+          url,
+          brand,
+          price,
+          quantity: 1,
+        });
+        if (insertError) throw insertError;
       }
 
-      const updatedCart = db
-        .prepare("SELECT * FROM cart WHERE userId = ?")
-        .all(req.session.userId);
+      const { data: updatedCart, error: fetchError } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("userId", req.session.userId);
+      if (fetchError) throw fetchError;
+
       return res.json(updatedCart);
     } else {
       // 🔹 Gäst → spara i session
@@ -87,7 +106,7 @@ export function addToCart(req, res) {
 }
 
 // PATCH /api/cart/:id (uppdatera quantity)
-export function updateCart(req, res) {
+export async function updateCart(req, res) {
   const { id } = req.params;
   const { quantity } = req.body;
 
@@ -97,13 +116,19 @@ export function updateCart(req, res) {
 
   try {
     if (req.session.userId) {
-      db.prepare(
-        "UPDATE cart SET quantity = ? WHERE id = ? AND userId = ?"
-      ).run(quantity, id, req.session.userId);
+      const { error: updateError } = await supabase
+        .from("cart")
+        .update({ quantity })
+        .eq("id", id)
+        .eq("userId", req.session.userId);
+      if (updateError) throw updateError;
 
-      const updatedCart = db
-        .prepare("SELECT * FROM cart WHERE userId = ?")
-        .all(req.session.userId);
+      const { data: updatedCart, error: fetchError } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("userId", req.session.userId);
+      if (fetchError) throw fetchError;
+
       return res.json(updatedCart);
     } else {
       if (!req.session.cart) req.session.cart = [];
@@ -119,19 +144,24 @@ export function updateCart(req, res) {
 }
 
 // DELETE /api/cart/:id
-export function removeFromCart(req, res) {
+export async function removeFromCart(req, res) {
   const { id } = req.params;
 
   try {
     if (req.session.userId) {
-      db.prepare("DELETE FROM cart WHERE id = ? AND userId = ?").run(
-        id,
-        req.session.userId
-      );
+      const { error: deleteError } = await supabase
+        .from("cart")
+        .delete()
+        .eq("id", id)
+        .eq("userId", req.session.userId);
+      if (deleteError) throw deleteError;
 
-      const updatedCart = db
-        .prepare("SELECT * FROM cart WHERE userId = ?")
-        .all(req.session.userId);
+      const { data: updatedCart, error: fetchError } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("userId", req.session.userId);
+      if (fetchError) throw fetchError;
+
       return res.json(updatedCart);
     } else {
       if (!req.session.cart) req.session.cart = [];
@@ -148,40 +178,57 @@ export function removeFromCart(req, res) {
 }
 
 // 🔹 Huvudfunktion: checkout
-export function checkout(req, res) {
+export async function checkout(req, res) {
   try {
     const userId = req.session.userId || null;
 
     // 1. Hämta cart
-    const cartItems = getCartItems(userId, req.session);
+    // OBS: getCartItems, createOrder, addOrderItems, updateOrderTotal, clearCart
+    // kommer från utils/orders.js, som inte var med i uppladdningen och också
+    // behöver konverteras till Supabase-anrop (och göras async om de inte redan är det).
+    const cartItems = await getCartItems(userId, req.session);
     if (!cartItems.length) {
       return res.status(400).json({ error: "Varukorgen är tom" });
     }
 
     // 2. Skapa order
-    const orderId = createOrder(userId);
+    const orderId = await createOrder(userId);
 
     // 3. Lägg till orderItems + uppdatera lager
-    const total = addOrderItems(orderId, cartItems);
+    const total = await addOrderItems(orderId, cartItems);
 
     // 4. Uppdatera orderns totalsumma
-    updateOrderTotal(orderId, total);
+    await updateOrderTotal(orderId, total);
 
     // 5. Töm cart
-    clearCart(userId, req.session);
+    await clearCart(userId, req.session);
 
     // 6. Returnera order
-    const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(orderId);
-    const orderItems = db
-      .prepare(
-        `
-        SELECT orderItems.id AS orderItemId, orderItems.orderId, orderItems.quantity, orderItems.price, orderItems.quantity * orderItems.price AS subtotal,
-                products.id AS productId, products.name, products.imageUrl
-        FROM orderItems
-        JOIN products ON orderItems.productId = products.id
-        WHERE orderItems.orderId = ?`
-      )
-      .all(orderId);
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    if (orderError) throw orderError;
+
+    // Kräver att en foreign key-relation finns mellan orderItems.productId och products.id
+    // i Supabase, annars går det inte att hämta nested "products(...)" så här.
+    const { data: rawOrderItems, error: itemsError } = await supabase
+      .from("orderItems")
+      .select("id, orderId, quantity, price, products(id, name, imageUrl)")
+      .eq("orderId", orderId);
+    if (itemsError) throw itemsError;
+
+    const orderItems = rawOrderItems.map((item) => ({
+      orderItemId: item.id,
+      orderId: item.orderId,
+      quantity: item.quantity,
+      price: item.price,
+      subtotal: item.quantity * item.price,
+      productId: item.products.id,
+      name: item.products.name,
+      imageUrl: item.products.imageUrl,
+    }));
 
     res.json({ success: true, order, orderItems });
   } catch (err) {

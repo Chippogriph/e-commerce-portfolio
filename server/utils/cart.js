@@ -1,16 +1,39 @@
-import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
+
 // Migrera gästcart till användarcart vid login
-export const migrateGuestCart = (userId, sessionCart) => {
+export const migrateGuestCart = async (userId, sessionCart) => {
   if (!sessionCart || sessionCart.length === 0) return;
 
-  sessionCart.forEach(item => {
-    const existingProduct = db.prepare("SELECT * FROM cart WHERE slug = ? AND userId = ?").get(item.slug, userId);
-    if (existingProduct) {
-      db.prepare("UPDATE cart SET quantity = quantity + ? WHERE slug = ? AND userId = ?").run(item.quantity, item.slug, userId);
-    } else {
-      db.prepare("INSERT INTO cart (userId, slug, name, url, brand, price, quantity) VALUES (?, ?, ?, ?, ?, ?, ?)")
-        .run(userId, item.slug, item.name, item.url, item.brand, item.price, item.quantity);
-    }
-  });
-};
+  for (const item of sessionCart) {
+    const { data: existingProduct, error: findError } = await supabase
+      .from("cart")
+      .select("*")
+      .eq("slug", item.slug)
+      .eq("userId", userId)
+      .maybeSingle();
 
+    if (findError) throw findError;
+
+    if (existingProduct) {
+      const { error: updateError } = await supabase
+        .from("cart")
+        .update({ quantity: existingProduct.quantity + item.quantity })
+        .eq("slug", item.slug)
+        .eq("userId", userId);
+
+      if (updateError) throw updateError;
+    } else {
+      const { error: insertError } = await supabase.from("cart").insert({
+        userId,
+        slug: item.slug,
+        name: item.name,
+        url: item.url,
+        brand: item.brand,
+        price: item.price,
+        quantity: item.quantity,
+      });
+
+      if (insertError) throw insertError;
+    }
+  }
+};

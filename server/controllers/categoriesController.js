@@ -1,34 +1,41 @@
-import { db } from "../db/connection.js";
+import supabase from "../config/supabase.js";
 
-export const getAllCategories = (req, res) => {
+export const getAllCategories = async (req, res) => {
   try {
-    const categories = db.prepare("SELECT * FROM categories").all();
+    const { data: categories, error } = await supabase
+      .from("categories")
+      .select("*");
+
+    if (error) throw error;
+
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: "Serverfel", details: error.message });
   }
 };
 
-export const getCategoryWithProducts = (req, res) => {
+export const getCategoryWithProducts = async (req, res) => {
   const { slug } = req.params;
 
   try {
-    const category = db
-      .prepare("SELECT * FROM categories WHERE slug = ?")
-      .get(slug);
+    const { data: category, error: categoryError } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (categoryError) throw categoryError;
 
     if (!category) {
       return res.status(404).json({ error: "Kategori hittades inte" });
     }
 
-    const products = db
-      .prepare(
-        `SELECT products.*
-         FROM products
-         JOIN categories ON products.categoryId = categories.id
-         WHERE categories.slug = ?`
-      )
-      .all(slug);
+    const { data: products, error: productsError } = await supabase
+      .from("products")
+      .select("*")
+      .eq("categoryId", category.id);
+
+    if (productsError) throw productsError;
 
     res.json({ category, products });
   } catch (error) {
@@ -36,7 +43,7 @@ export const getCategoryWithProducts = (req, res) => {
   }
 };
 
-export const addCategory = (req, res) => {
+export const addCategory = async (req, res) => {
   try {
     const { name } = req.body;
     if (!req.file) return res.status(400).json({ error: "Ingen bild skickad" });
@@ -44,36 +51,55 @@ export const addCategory = (req, res) => {
     const slug = formatSlug(name);
     const imageUrl = "/images/categories/" + req.file.filename;
 
-    const statement = db.prepare(`
-      INSERT INTO categories (name, slug, imageUrl)
-      VALUES (?, ?, ?)
-    `);
+    const { data: category, error } = await supabase
+      .from("categories")
+      .insert({ name, slug, imageUrl })
+      .select()
+      .single();
 
-    const result = statement.run(name, slug, imageUrl); // <--- Spara resultatet här!
+    if (error) throw error;
 
-    res.status(201).json({
-      id: result.lastInsertRowid, // nu finns id
-      name,
-      slug,
-      imageUrl,
-    });
+    res.status(201).json(category);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Något gick fel vid tillägg av kategori" });
   }
 };
 
-export const removeCategory = (req, res) => {
+export const removeCategory = async (req, res) => {
   const { id } = req.params;
 
-  const category = db.prepare("SELECT * FROM categories WHERE id = ?").get(id);
-  if (!category) {
-    return res.status(404).json({ error: "Produkt inte hittad" });
-  }
+  try {
+    const { data: category, error: findError } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
 
-  db.prepare("DELETE FROM categories WHERE id = ?").run(id);
-  const updatedcategories = db.prepare("SELECT * FROM categories").all();
-  res.json(updatedcategories);
+    if (findError) throw findError;
+
+    if (!category) {
+      return res.status(404).json({ error: "Produkt inte hittad" });
+    }
+
+    const { error: deleteError } = await supabase
+      .from("categories")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) throw deleteError;
+
+    const { data: updatedCategories, error: fetchError } = await supabase
+      .from("categories")
+      .select("*");
+
+    if (fetchError) throw fetchError;
+
+    res.json(updatedCategories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Något gick fel vid borttagning av kategori" });
+  }
 };
 
 function formatSlug(text) {
