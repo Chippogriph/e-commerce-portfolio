@@ -1,10 +1,7 @@
 # Examensprojekt – Freaky Fashion - E-handel
 
-Detta är en examinerande uppgift i min frontendutvecklarutbildning.  
-Projektet består av en Angular-baserad frontend och en Node.js/Express-baserad backend med SQLite som databas.
-
-Detta projekt är likt ett tidigare projekt som också heter Freaky Fashion som är byggt med Angular-baserad frontend.  
-Skillnaden med detta projekt är dock att fokus har legat mer på backend.
+Detta projekt är baserat på en examinerande slutuppgift från min frontendutvecklarutbildning.
+Projektet består av en Angular-baserad frontend och en Node.js/Express-baserad backend med databas genom Supabase.
 
 ## 📂 Projektstruktur
 
@@ -15,8 +12,8 @@ Skillnaden med detta projekt är dock att fokus har legat mer på backend.
 
 1. Klona projektet
    ```bash
-   git clone https://github.com/Chippogriph/Freaky-Fashion-Backendfocused.git
-   cd Freaky-Fashion-Backendfocused
+   git clone https://github.com/Chippogriph/e-commerce-portfolio.git
+   cd e-commerce-portfolio
    ```
 
 ### Frontend
@@ -40,33 +37,31 @@ Skillnaden med detta projekt är dock att fokus har legat mer på backend.
    ```
 
 ### Miljövariabler
-För att kunna skapa ett admin-konto med seed-scriptet behöver du skapa en `.env`-fil i server-mappen med de variabler som projektet förväntar sig.  
-  
-Exempel på innehåll (byt ut värdena mot dina egna):  
-ADMIN_USERNAME=your-admin-username  
-ADMIN_PASSWORD=your-admin-password  
+Skapa en `.env`-fil i server-mappen med de variabler som projektet förväntar sig.
 
-- `.env` används av `seedAdmin.js` för att lägga till ett admin-konto i databasen.
+Exempel på innehåll (byt ut värdena mot dina egna):
+```
+SUPABASE_URL=your-supabase-project-url
+SUPABASE_SECRET_KEY=your-supabase-service-role-key
+ADMIN_USERNAME=your-admin-username
+ADMIN_PASSWORD=your-admin-password
+```
+
+- `SUPABASE_URL` och `SUPABASE_SECRET_KEY` används av backend för att ansluta till Supabase (service role-nyckeln, inte den publika anon-nyckeln).
+- `ADMIN_USERNAME` och `ADMIN_PASSWORD` används av `seedAdmin.js` för att lägga till ett admin-konto.
 - Den här filen **ska inte committas** eftersom den innehåller känslig information.
-
 
 ### Databas
 
-Backend använder SQLite via `better-sqlite3`. För att projektet ska fungera korrekt måste databasen skapas och initialiseras med testdata samt ett admin-konto.
+Backend använder [Supabase](https://supabase.com/) (Postgres) som databas via `@supabase/supabase-js`.
 
-1. Skapa en tom SQLite-databas
-
-   ```bash
-   node -e "require('better-sqlite3')('db/freaky-fashion.db')"
-
-   ```
-
-2. Skapa tabeller och populera med testdata
+1. Skapa ett projekt på [supabase.com](https://supabase.com/) och hämta din projekt-URL och service role-nyckel under **Project Settings → API**.
+2. Skapa tabellerna `categories`, `products`, `users`, `userFavorites`, `cart`, `orders` och `orderItems` i Supabase (t.ex. via SQL Editor eller Table Editor).
+3. Fyll i `.env` enligt exemplet ovan.
+4. Skapa ett admin-konto:
 
    ```bash
-   node utils/initDb.js
    node utils/seedAdmin.js
-
    ```
 
 ## Körning
@@ -96,7 +91,7 @@ Backend använder SQLite via `better-sqlite3`. För att projektet ska fungera ko
    - Angular
    - Tailwind CSS
    - Node.js / Express
-   - SQLite
+   - Supabase (Postgres)
 
 ## 📑 Funktionalitet
 
@@ -107,4 +102,4 @@ Backend använder SQLite via `better-sqlite3`. För att projektet ska fungera ko
    - Lägg till i varukorg
    - Hantera beställning
    - Enkel adminvy för produkter och kategorier
-````
+   - Adminhantering, lägga till/ ta bort produkter och kategorier
