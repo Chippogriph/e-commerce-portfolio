@@ -8,7 +8,7 @@
   <a [routerLink]="'/products/' + product.slug">
     <div class="relative">
       <img
-        src="product.imageUrl | fullImageUrl"
+        [src]="product.imageUrl | fullImageUrl"
         alt="{{ product.name }}"
         class="w-full object-cover rounded-t-md aspect-square object-top"
       />
