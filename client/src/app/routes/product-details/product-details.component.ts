@@ -4,10 +4,14 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductCarouselComponent } from '../../shared/components/product-carousel/product-carousel.component';
 import { CartItems, CartService } from '../../services/cart.service';
 import { Title } from '@angular/platform-browser';
+import { FullImageUrlPipe } from '../../shared/pipes/full-image-url.pipe';
 
 @Component({
   selector: 'app-product-details',
-  imports: [ProductCarouselComponent],
+  imports: [
+    ProductCarouselComponent,
+    FullImageUrlPipe
+  ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
 })

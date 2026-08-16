@@ -10,7 +10,7 @@
     <a [routerLink]="'/products/' + product.slug">
       <div class="bg-white p-4 shadow-lg rounded-lg">
         <img
-          [src]="product.imageUrl"
+          [src]="product.imageUrl | fullImageUrl"
           [alt]="product.name"
           class="w-full h-auto rounded-b-md aspect-square object-top object-cover"
         />

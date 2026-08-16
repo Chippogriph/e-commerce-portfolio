@@ -2,12 +2,14 @@ import { Component, inject } from '@angular/core';
 import { Product, ProductService } from '../../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FullImageUrlPipe } from '../../pipes/full-image-url.pipe';
 
 @Component({
   selector: 'app-product-carousel',
   imports: [
     CommonModule,
-    RouterLink
+    RouterLink,
+    FullImageUrlPipe
   ],
   templateUrl: './product-carousel.component.html',
   styleUrl: './product-carousel.component.css',

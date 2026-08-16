@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { FullImageUrlPipe } from '../../../shared/pipes/full-image-url.pipe';
 
 @Component({
   selector: 'app-hero',
-  imports: [],
+  imports: [FullImageUrlPipe],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css'
 })
