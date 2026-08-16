@@ -6,7 +6,7 @@
   >
     <div class="relative aspect-[5/3]">
       <img
-        src="{{ categorie.imageUrl }}"
+        [src]="categorie.imageUrl | fullImageUrl"
         alt="{{ categorie.name }}"
         class="w-full h-full object-cover rounded-lg shadow-2xl transition-opacity duration-300 group-hover:opacity-50"
       />
