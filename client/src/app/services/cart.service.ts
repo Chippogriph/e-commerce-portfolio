@@ -28,62 +28,98 @@ export class CartService {
   }
 
   getCart(): Observable<CartItems[]> {
-    return this.http.get<CartItems[]>(this.apiUrl).pipe(
-      tap((items) => {
-        const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);
-        this.cartCount.next(totalCount);
+    return this.http
+      .get<CartItems[]>(this.apiUrl, {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        tap((items) => {
+          const totalCount = items.reduce(
+            (acc, item) => acc + item.quantity,
+            0
+          );
+
+          this.cartCount.next(totalCount);
+        })
+      );
   }
 
   addToCart(item: CartItems): Observable<CartItems> {
-    return this.http.post<CartItems>(`${this.apiUrl}/add`, item).pipe(
-      tap(() => {
-        this.incrementCount(item.quantity);
+    return this.http
+      .post<CartItems>(`${this.apiUrl}/add`, item, {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        tap(() => {
+          this.incrementCount(item.quantity);
+        })
+      );
   }
 
-  updateQuantity(productId: number, quantity: number): Observable<CartItems[]> {
-  return this.http
-    .put<CartItems[]>(`${this.apiUrl}/update/${productId}`, { quantity })
-    .pipe(
-      tap(() => {
-        this.loadCartCount();
-      })
-    );
-}
-
+  updateQuantity(
+    productId: number,
+    quantity: number
+  ): Observable<CartItems[]> {
+    return this.http
+      .put<CartItems[]>(
+        `${this.apiUrl}/update/${productId}`,
+        { quantity },
+        {
+          withCredentials: true,
+        }
+      )
+      .pipe(
+        tap(() => {
+          this.loadCartCount();
+        })
+      );
+  }
 
   removeFromCart(productId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/remove/${productId}`).pipe(
-      tap(() => {
-        this.loadCartCount();
+    return this.http
+      .delete(`${this.apiUrl}/remove/${productId}`, {
+        withCredentials: true,
       })
-    );
+      .pipe(
+        tap(() => {
+          this.loadCartCount();
+        })
+      );
   }
 
-checkout(orderData: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  street: string;
-  zipCode: string;
-  city: string;
-  newsletter: boolean;
-}): Observable<any> {
-  return this.http.post(`${this.apiUrl}/checkout`, orderData).pipe(
-    tap(() => { this.loadCartCount(); })
-  );
-}
-
-
+  checkout(orderData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    street: string;
+    zipCode: string;
+    city: string;
+    newsletter: boolean;
+  }): Observable<any> {
+    return this.http
+      .post(`${this.apiUrl}/checkout`, orderData, {
+        withCredentials: true,
+      })
+      .pipe(
+        tap(() => {
+          this.loadCartCount();
+        })
+      );
+  }
 
   private loadCartCount() {
-    this.http.get<CartItems[]>(this.apiUrl).subscribe((items) => {
-      const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);
-      this.cartCount.next(totalCount);
-    });
+    this.http
+      .get<CartItems[]>(this.apiUrl, {
+        withCredentials: true,
+      })
+      .subscribe((items) => {
+        const totalCount = items.reduce(
+          (acc, item) => acc + item.quantity,
+          0
+        );
+
+        this.cartCount.next(totalCount);
+      });
   }
 
   private incrementCount(quantity: number) {

@@ -20,6 +20,7 @@ const SQLiteStore = connectSqlite3(session);
 app.use(express.json());
 app.use("/images", express.static(path.join(process.cwd(), "public/images")));
 app.use(cors(corsConfig));
+app.set("trust proxy", 1);
 app.use(
   session({
     store: new SQLiteStore({
@@ -30,8 +31,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // true i produktion med HTTPS
+      secure: true,
       httpOnly: true,
+      sameSite: "none",
       maxAge: 1000 * 60 * 60, // 1 timme
     },
   })
