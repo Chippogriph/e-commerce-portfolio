@@ -38,7 +38,11 @@ app.use(
     },
   })
 );
-
+app.use((req, res, next) => {
+  console.log("SESSION ID:", req.sessionID);
+  console.log("SESSION:", req.session);
+  next();
+});
 app.use("/api/products/search", searchRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
